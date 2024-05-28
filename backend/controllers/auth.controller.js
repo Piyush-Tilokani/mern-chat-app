@@ -9,10 +9,10 @@ export const login = async (req, res) =>{
         const isPasswordCorrect = await bcryptjs.compare(password, user?.password || "");
         if(!user || !isPasswordCorrect){
             if(!user){
-                res.status(404).json({error: `No user with username: ${username}`});
+                return res.status(400).json({error: `No user with username: ${username}`});
             }
             if(!isPasswordCorrect){
-                res.status(400).json({error: "Invalid password"});
+                return res.status(400).json({error: "Invalid password"});
             }
         }       
         generateTokenAndSetCookie( user._id, res);
@@ -29,7 +29,7 @@ export const login = async (req, res) =>{
         console.log("Error in login controller: ", error.message);
         res.status(500).json({error: "Internal Server error occured"});
     }
-}
+};
 export const signup = async (req, res) =>{
     try {
         const {fullName, username, password, confirmPassword, gender} = req.body
@@ -39,7 +39,7 @@ export const signup = async (req, res) =>{
         
         const user = await User.findOne({username});
         if(user){
-            return res.status(400).json({error: "User already exists with this username"})
+            return res.status(400).json({error: "User already exists with the username: "+ username})
         }
 
         //Hash and store pass
